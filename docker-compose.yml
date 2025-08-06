@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # .NET Implementation
+  mssql-mcp-dotnet:
+    build:
+      context: ./MssqlMcp/dotnet
+      dockerfile: Dockerfile
+    image: mssql-mcp:dotnet
+    container_name: mssql-mcp-dotnet
+    environment:
+      # Example for local SQL Server with Windows Authentication
+      # CONNECTION_STRING: "Server=host.docker.internal;Database=test;Trusted_Connection=True;TrustServerCertificate=True"
+      
+      # Example for Azure SQL Database with Azure AD Authentication
+      # CONNECTION_STRING: "Server=tcp:your-server.database.windows.net,1433;Initial Catalog=your-database;Encrypt=Mandatory;TrustServerCertificate=False;Connection Timeout=30;Authentication=Active Directory Interactive"
+      
+      # Override with your actual connection string
+      CONNECTION_STRING: ${DOTNET_CONNECTION_STRING:-Server=host.docker.internal;Database=test;Integrated Security=false;User ID=sa;Password=YourStrongPassword123;TrustServerCertificate=True}
+    stdin_open: true
+    tty: true
+    networks:
+      - mcp-network
+    # Uncomment if you need to mount any local files or certificates
+    # volumes:
+    #   - ./certs:/app/certs:ro
+
+  # Node.js Implementation
+  mssql-mcp-node:
+    build:
+      context: ./MssqlMcp/Node
+      dockerfile: Dockerfile
+    image: mssql-mcp:node
+    container_name: mssql-mcp-node
+    environment:
+      SERVER_NAME: ${NODE_SERVER_NAME:-host.docker.internal}
+      DATABASE_NAME: ${NODE_DATABASE_NAME:-test}
+      READONLY: ${NODE_READONLY:-false}
+      CONNECTION_TIMEOUT: ${NODE_CONNECTION_TIMEOUT:-30}
+      TRUST_SERVER_CERTIFICATE: ${NODE_TRUST_SERVER_CERTIFICATE:-false}
+    stdin_open: true
+    tty: true
+    networks:
+      - mcp-network
+
+  # Optional: SQL Server for local development
+  # Uncomment if you want to run SQL Server in Docker for testing
+  # sqlserver:
+  #   image: mcr.microsoft.com/mssql/server:2022-latest
+  #   container_name: mssql-server
+  #   environment:
+  #     ACCEPT_EULA: "Y"
+  #     SA_PASSWORD: "YourStrongPassword123"
+  #     MSSQL_PID: "Developer"
+  #   ports:
+  #     - "1433:1433"
+  #   volumes:
+  #     - sqlserver_data:/var/opt/mssql
+  #   networks:
+  #     - mcp-network
+
+networks:
+  mcp-network:
+    driver: bridge
+
+# Uncomment if using SQL Server container
+# volumes:
+#   sqlserver_data:

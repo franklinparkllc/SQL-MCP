@@ -1,0 +1,14 @@
+node_modules
+npm-debug.log
+dist
+.git
+.gitignore
+README.md
+LICENSE
+.env
+.vscode
+.idea
+*.log
+.DS_Store
+src/samples
+src/img

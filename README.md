@@ -154,6 +154,23 @@ https://github.com/Azure-Samples/sql-in-fabric-ai-embeddings-workshop
 
 See the description in each sample for instructions (projects will have either a README file or instructions in the notebooks themselves.)
 
+## 🐳 Docker Support
+
+Both the .NET and Node.js implementations of the MSSQL MCP server can be run in Docker containers. This provides a consistent environment and simplifies deployment.
+
+### Quick Start with Docker
+
+```bash
+# Build the images
+./build-docker.ps1  # Windows
+./build-docker.sh   # Linux/macOS
+
+# Run the containers
+docker-compose up
+```
+
+For detailed Docker setup and configuration instructions, see [DOCKER.md](DOCKER.md).
+
 ## Trademarks
 
 This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 
