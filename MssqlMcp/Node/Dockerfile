@@ -5,8 +5,9 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci
+# Install all dependencies (including dev dependencies for building)
+# Skip the prepare script during install
+RUN npm ci --ignore-scripts
 
 # Copy source code and TypeScript config
 COPY tsconfig.json ./
@@ -19,9 +20,11 @@ RUN npm run build
 FROM node:20-alpine AS runtime
 WORKDIR /app
 
-# Install production dependencies only
+# Copy package files
 COPY package*.json ./
-RUN npm ci --only=production && npm cache clean --force
+
+# Install production dependencies only (skip prepare script)
+RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
 
 # Copy built application from builder stage
 COPY --from=builder /app/dist ./dist
